@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Billing Software</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: rgb(255, 255, 255);
+        }
+
+        .container {
+            display: flex;
+        }
+
+        .products {
+            flex: 1;
+        }
+
+        .billing-items {
+            flex: 1;
+            margin-left: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .btn {
+            background-color: #1e90ff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #008CBA;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="products">
+            <h2>Products</h2>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Add</th>
+                </tr>
+                <tr>
+                    <td>Pen</td>
+                    <td>Rs 5</td>
+                    <td><button class="btn" onclick="addToBilling('Pen', 5, 20)">Add</button></td>
+                </tr>
+                <tr>
+                    <td>Books</td>
+                    <td>Rs 10</td>
+                    <td><button class="btn" onclick="addToBilling('Books', 10, 12)">Add</button></td>
+                </tr>
+                <tr>
+                    <td>Pencil</td>
+                    <td>Rs 4</td>
+                    <td><button class="btn" onclick="addToBilling('Pencil', 4, 25)">Add</button></td>
+                </tr>
+                <tr>
+                    <td>Box</td>
+                    <td>Rs 3</td>
+                    <td><button class="btn" onclick="addToBilling('Box', 3, 10)">Add</button></td>
+                </tr>
+            </table>
+        </div>
+        <div class="billing-items">
+            <h2>Billing Items</h2>
+            <table>
+                <tr>
+                    <th>Added Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total Price</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { name: 'Pen', price: 5, stock: 20 },
+            { name: 'Books', price: 10, stock: 12 },
+            { name: 'Pencil', price: 4, stock: 25 },
+            { name: 'Box', price: 3, stock: 10 }
+        ];
+
+        const billingItems = [];
+
+        function addToBilling(name, price, stock) {
+            if (!billingItems.find(item => item.name === name) && stock > 0) {
+                billingItems.push({ name, price, quantity: 1 });
+                updateBillingItems();
+            }
+        }
+
+        function updateBillingItems() {
+            const billingTable = document.querySelector('.billing-items table');
+            billingTable.innerHTML = `
+                <tr>
+                    <th>Added Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total Price</th>
+                </tr>
+            `;
+            
+            let totalAmount = 0;
+
+            billingItems.forEach(item => {
+                const total = item.price * item.quantity;
+                totalAmount += total;
+
+                billingTable.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td><input type="number" value="${item.quantity}" min="1" onchange="updateQuantity('${item.name}', this.value)"></td>
+                        <td>Rs ${item.price}</td>
+                        <td>Rs ${total}</td>
+                    </tr>
+                `;
+            });
+
+            billingTable.innerHTML += `
+                <tr>
+                    <td colspan="3" style="text-align: right;"><strong>Total Amount:</strong></td>
+                    <td>Rs ${totalAmount}</td>
+                </tr>
+            `;
+        }
+
+        function updateQuantity(name, quantity) {
+            const item = billingItems.find(item => item.name === name);
+            if (item) {
+                item.quantity = parseInt(quantity);
+                updateBillingItems();
+            }
+        }
+    </script>
+</body>
+</html>
